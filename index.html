@@ -1,167 +1,359 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | Projeto FPO - Fiocruz</title>
+    <title>Dashboard | Projeto FPO - Fioruz</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 20px; }
-        .header { background-color: #0056b3; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: center; }
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab-button { background-color: #e2e8f0; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; font-weight: bold; transition: 0.3s; font-size: 14px; }
-        .tab-button:hover, .tab-button.active { background-color: #0056b3; color: white; }
-        .tab-content { display: none; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background-color: #f8f9fa; font-weight: 600;}
-        .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 0.85em; font-weight: bold; }
-        .status-ok { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .status-pendente { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
-        .status-atraso { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        :root {
+            --primary: #2c3e50;
+            --secondary: #34495e;
+            --accent: #3498db;
+            --danger: #e74c3c;
+            --warning: #f1c40f;
+            --success: #2ecc71;
+            --bg: #ecf0f1;
+            --card-bg: #ffffff;
+            --text: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 { margin: 0; font-size: 24px; }
+        
+        /* Controles (Filtros e Notas) */
+        .controls-section {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filters {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .notes-area {
+            background: #fff9c4; /* Cor de post-it */
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            flex: 1;
+            min-width: 300px;
+            border-left: 5px solid #fbc02d;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 5px;
+            transition: opacity 0.2s;
+        }
+        .btn:hover { opacity: 0.8; }
+        .btn-all { background-color: var(--primary); color: white; }
+        .btn-urgent { background-color: var(--danger); color: white; }
+        .btn-warning { background-color: var(--warning); color: #333; }
+        .btn-save { background-color: var(--success); color: white; margin-top: 10px; width: 100%; }
+
+        textarea {
+            width: 100%;
+            height: 80px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 8px;
+            font-family: inherit;
+            resize: vertical;
+            box-sizing: border-box;
+            background: transparent;
+        }
+
+        /* Quadro (Board) */
+        .board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .column {
+            background-color: #e2e6e9;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .column-header {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-left: 5px solid var(--accent);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+        }
+
+        .card.urgent { border-left-color: var(--danger); }
+        .card.warning { border-left-color: var(--warning); }
+        
+        /* Classe para esconder cartões no filtro */
+        .hidden { display: none !important; }
+
+        .card-title { font-size: 14px; font-weight: bold; margin: 0 0 10px 0; }
+        .badge {
+            display: inline-block; padding: 3px 8px; border-radius: 12px;
+            font-size: 11px; font-weight: bold; margin-right: 5px; margin-bottom: 8px;
+        }
+        .badge-date { background-color: #d1ecf1; color: #0c5460; }
+        .badge-author { background-color: #e2e3e5; color: #383d41; }
+        .alert-text { color: var(--danger); font-weight: bold; font-size: 12px; margin-top: 8px; display: block; background-color: #f8d7da; padding: 5px; border-radius: 4px; }
+        .details { font-size: 12px; color: #555; line-height: 1.5; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <h1>Painel Interativo - Estrutura Projeto FPO</h1>
-    <p>Gestão de Produtos, Responsabilidades e Prazos</p>
-</div>
+    <header>
+        <div class="header-content">
+            <div>
+                <h1>Painel de Execução | Projeto FPO - Fioruz</h1>
+                <p style="margin: 5px 0 0 0; font-size: 14px; opacity: 0.8;">Visão Executiva de Prazos e Responsáveis</p>
+            </div>
+            <div style="text-align: right;">
+                <strong>Status Geral</strong><br>
+                <span style="font-size: 14px;">12 Entregas Mapeadas</span>
+            </div>
+        </div>
+    </header>
 
-<div class="tabs">
-    <button class="tab-button active" onclick="openTab(event, 'entregas')">📦 Estrutura de Produtos e Entregas</button>
-    <button class="tab-button" onclick="openTab(event, 'cronograma')">📅 Prazos e Metas</button>
-</div>
-
-<div id="entregas" class="tab-content" style="display:block;">
-    <h2>Mapeamento de Entregas Oficiais</h2>
-    <table>
-        <tr>
-            <th>Produto / Entrega</th>
-            <th>Responsáveis Principais</th>
-            <th>Status / Observações</th>
-        </tr>
-        <tr>
-            <td><strong>Produto P1:</strong> Relatório e artigo sobre outorga da CEDAE no RJ</td>
-            <td>Bruno, Ana e Talita</td>
-            <td><span class="status-badge status-pendente">Apresentar no projeto 15/04</span></td>
-        </tr>
-        <tr>
-            <td><strong>Produto P2:</strong> Relatório CEDAE municípios do interior</td>
-            <td>Bruno, Helen e Carina</td>
-            <td><span class="status-badge status-pendente">Apresentar 19/03 | Consolidar 05/05</span></td>
-        </tr>
-        <tr>
-            <td><strong>Produto P4:</strong> Artigo científico (indicadores económicos)</td>
-            <td>Bruno, Monique, Júlia, Bernardo</td>
-            <td><span class="status-badge status-ok">Entrega final em Agosto</span></td>
-        </tr>
-        <tr>
-            <td>Base cartográfica (Mapa de Georreferenciamento)</td>
-            <td>Júlia e Monique</td>
-            <td><span class="status-badge status-pendente">Submissão ENEP 23/03 | Final Junho</span></td>
-        </tr>
-        <tr>
-            <td>Curso popular "Financeirização das políticas de saneamento"</td>
-            <td>Bruno</td>
-            <td><span class="status-badge status-pendente">Articular com JR ou ENSP | Abril/Maio</span></td>
-        </tr>
-        <tr>
-            <td>Painel interativo com dados municipais e estaduais</td>
-            <td>Júlia, Ana e Helen</td>
-            <td><span class="status-badge status-ok">Auxiliar com a base e analisar</span></td>
-        </tr>
-         <tr>
-            <td>Dossiê temático / Glossário crítico</td>
-            <td>Bernardo e Júlia</td>
-            <td><span class="status-badge status-pendente">Versão inicial para 15/04</span></td>
-        </tr>
-        <tr>
-            <td>Legenda da Planilha (Documento técnico de padronização)</td>
-            <td>Bernardo</td>
-            <td><span class="status-badge status-atraso">Reunião com Adriana necessária</span></td>
-        </tr>
-    </table>
-</div>
-
-<div id="cronograma" class="tab-content">
-    <h2>Cronograma Consolidado (Por Datas)</h2>
-    <table>
-        <tr>
-            <th>Data / Prazo</th>
-            <th>Atividade / Entrega</th>
-            <th>Envolvidos(as)</th>
-        </tr>
-        <tr>
-            <td><strong>14/03</strong></td>
-            <td>Iniciar o Relatório de devolutiva e Pôster ENEP</td>
-            <td>Bernardo, Monique</td>
-        </tr>
-        <tr>
-            <td><strong>19/03</strong></td>
-            <td>Apresentação na reunião do projeto (Produto P2)</td>
-            <td>Helen e Carina</td>
-        </tr>
-        <tr>
-            <td><strong>23/03</strong></td>
-            <td>Data final de submissão do Pôster para o ENEP</td>
-            <td>Monique</td>
-        </tr>
-        <tr>
-            <td><strong>Final de Março</strong></td>
-            <td>Entrega da Versão 1 do Artigo do Rio de Janeiro</td>
-            <td>Ana e Talita</td>
-        </tr>
-        <tr>
-            <td><strong>10/04</strong></td>
-            <td>Revisão e ajustes do Produto P2</td>
-            <td>Helen e Carina</td>
-        </tr>
-        <tr>
-            <td><strong>15/04</strong></td>
-            <td>Apresentação P1 e versão inicial do Glossário</td>
-            <td>Ana, Talita, Júlia</td>
-        </tr>
-        <tr>
-            <td><strong>Abril / Maio</strong></td>
-            <td>Realização da Oficina / Curso Popular</td>
-            <td>Bruno</td>
-        </tr>
-        <tr>
-            <td><strong>05/05</strong></td>
-            <td>Consolidar o Produto P2</td>
-            <td>Helen e Carina</td>
-        </tr>
-        <tr>
-            <td><strong>Junho</strong></td>
-            <td>Entrega final do Mapa de Georreferenciamento</td>
-            <td>Monique</td>
-        </tr>
-        <tr>
-            <td><strong>Agosto</strong></td>
-            <td>Entrega do Artigo Final (Produto P4)</td>
-            <td>Monique, Júlia, Bernardo, Bruno</td>
-        </tr>
-    </table>
-</div>
-
-<script>
-    function openTab(evt, tabName) {
-        var i, tabcontent, tablinks;
+    <div class="controls-section">
+        <div class="filters">
+            <h3 style="margin-top: 0; font-size: 14px;">Filtros de Visão:</h3>
+            <button class="btn btn-all" onclick="filtrar('todos')">👁️ Ver Todos</button>
+            <button class="btn btn-urgent" onclick="filtrar('urgent')">🚨 Apenas Urgentes / Bloqueados</button>
+            <button class="btn btn-warning" onclick="filtrar('warning')">⚠️ Apenas Atenção / Alinhamento</button>
+        </div>
         
-        tabcontent = document.getElementsByClassName("tab-content");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
+        <div class="notes-area">
+            <h3 style="margin-top: 0; font-size: 14px; color: #5c4000;">📝 Observações do Gerente:</h3>
+            <textarea id="obsBox" placeholder="Digite aqui suas anotações, lembretes para reuniões, etc..."></textarea>
+            <button class="btn btn-save" onclick="salvarAnotacoes()">💾 Salvar Observações</button>
+            <span id="saveStatus" style="font-size: 11px; color: green; display: none; margin-top: 5px; text-align: center; display: block;">Salvo com sucesso!</span>
+        </div>
+    </div>
+
+    <div class="board">
+        <div class="column">
+            <div class="column-header">👤 Bruno</div>
+
+            <div class="card warning item-card">
+                <span class="badge badge-date">Prev: ABRIL</span>
+                <span class="badge badge-author">Ana e Talita</span>
+                <h3 class="card-title">Relatório e artigo sobre arrecadação e gastos (Outorga CEDAE - RJ)</h3>
+                <div class="details">
+                    <strong>Entrega/Revisão:</strong> Artigo município RJ (15/04)<br>
+                    <strong>Atenção:</strong> Atualização dos dados e deflator
+                </div>
+            </div>
+
+            <div class="card urgent item-card">
+                <span class="badge badge-date">Prev: ABRIL</span>
+                <span class="badge badge-author">Helen e Carina</span>
+                <h3 class="card-title">Relatório "A transferência dos recursos da outorga da CEDAE"</h3>
+                <div class="details">
+                    <strong>Entrega/Revisão:</strong> Artigo outros municípios (19/03)<br>
+                    <strong>Atenção:</strong> Apresentar no projeto 19/03. Versão 1 OK.
+                </div>
+            </div>
+
+            <div class="card warning item-card">
+                <span class="badge badge-date">Prev: MAIO</span>
+                <span class="badge badge-author">Bruno</span>
+                <h3 class="card-title">Curso popular "Financeirização das políticas públicas de saneamento"</h3>
+                <div class="details">
+                    <strong>Entrega/Revisão:</strong> Oficina / Curso Popular (ABRIL)<br>
+                    <strong>Atenção:</strong> Articular em Março. Realizar abr/mai.
+                </div>
+            </div>
+
+            <div class="card item-card">
+                <span class="badge badge-date">Prev: AGOSTO</span>
+                <span class="badge badge-author">Equipe FPO</span>
+                <h3 class="card-title">Artigo científico com indicadores econômicos e dados orçamentários</h3>
+                <div class="details">
+                    <strong>Entrega/Revisão:</strong> Artigo Final (10/06)<br>
+                    <strong>Atenção:</strong> Definir escopo
+                </div>
+            </div>
+        </div>
+
+        <div class="column">
+            <div class="column-header">👤 Júlia</div>
+
+            <div class="card urgent item-card">
+                <span class="badge badge-date">Prev: 23/03</span>
+                <span class="badge badge-author">Monique</span>
+                <h3 class="card-title">Base cartográfica e relatório de obras de saneamento (RJ)</h3>
+                <div class="details">
+                    <strong>Entrega/Revisão:</strong> Mapa Georreferenciamento (14/03)<br>
+                    <span class="alert-text">🚨 Submissão pôster ENEP (23/03). Cruzar no site!</span>
+                </div>
+            </div>
+
+            <div class="card item-card">
+                <span class="badge badge-date">Prev: AGOSTO</span>
+                <span class="badge badge-author">Ana e Helen</span>
+                <h3 class="card-title">Painel interativo com dados municipais e estaduais sobre orçamento</h3>
+                <div class="details">
+                    <strong>Entrega/Revisão:</strong> Sistematização (JUNHO)<br>
+                    <strong>Atenção:</strong> Auxiliar com base/dados (não está muito claro)
+                </div>
+            </div>
+
+            <div class="card warning item-card">
+                <span class="badge badge-date">Prev: MAIO</span>
+                <span class="badge badge-author">Luiz Mario</span>
+                <h3 class="card-title">Coleção de boletins temáticos mensais da rede</h3>
+                <div class="details">
+                    <strong>Entrega/Revisão:</strong> Contribuição p/ boletim (ABRIL)<br>
+                    <strong>Atenção:</strong> 1 realizado. Verificar pendentes.
+                </div>
+            </div>
+
+            <div class="card item-card">
+                <span class="badge badge-date">Prev: Sem Data</span>
+                <span class="badge badge-author">Luiz Mario</span>
+                <h3 class="card-title">Série de apresentações em PowerPoint com achados do subgrupo</h3>
+                <div class="details">
+                    <strong>Entrega/Revisão:</strong> Pequenas apresentações para Rede<br>
+                    <span class="alert-text">⚠️ Necessário reunião de alinhamento com Adriana</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="column">
+            <div class="column-header">👤 Bernardo</div>
+
+            <div class="card urgent item-card">
+                <span class="badge badge-date">Prev: AGOSTO</span>
+                <span class="badge badge-author">Luiz Mario</span>
+                <h3 class="card-title">Documento técnico de validação e padronização dos dados</h3>
+                <div class="details">
+                    <strong>Entrega/Revisão:</strong> Legenda da Planilha (JUNHO)<br>
+                    <span class="alert-text">🚨 NGM RESPONSÁVEL / NÃO SABEMOS COMO FAZER</span>
+                </div>
+            </div>
+
+            <div class="card item-card">
+                <span class="badge badge-date">Prev: AGOSTO</span>
+                <span class="badge badge-author">Equipe FPO</span>
+                <h3 class="card-title">Relatório de devolutiva pública com achados e metodologias</h3>
+                <div class="details">
+                    <strong>Entrega/Revisão:</strong> Seminário Final (JUNHO)<br>
+                    <strong>Atenção:</strong> Verificar informações com a Adriana
+                </div>
+            </div>
+
+            <div class="card item-card">
+                <span class="badge badge-date">Prev: AGOSTO</span>
+                <span class="badge badge-author">Luiz Mario</span>
+                <h3 class="card-title">Kit de comunicação com cards, textos e infográficos</h3>
+                <div class="details">
+                    <strong>Entrega/Revisão:</strong> Produto da rede/informes (JUNHO)
+                </div>
+            </div>
+
+            <div class="card item-card">
+                <span class="badge badge-date">Prev: AGOSTO</span>
+                <span class="badge badge-author">Júlia</span>
+                <h3 class="card-title">Dossiê temático com bibliografia e glossário crítico</h3>
+                <div class="details">
+                    <strong>Entrega/Revisão:</strong> Glossário de termos (JUNHO)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sistema de Filtros
+        function filtrar(tipo) {
+            const cards = document.querySelectorAll('.item-card');
+            
+            cards.forEach(card => {
+                if (tipo === 'todos') {
+                    card.classList.remove('hidden');
+                } else if (tipo === 'urgent') {
+                    if (card.classList.contains('urgent')) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                } else if (tipo === 'warning') {
+                    if (card.classList.contains('warning')) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                }
+            });
         }
-        
-        tablinks = document.getElementsByClassName("tab-button");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-        
-        document.getElementById(tabName).style.display = "block";
-        evt.currentTarget.className += " active";
-    }
-</script>
 
+        // Sistema de Salvamento de Notas (Local Storage)
+        const obsBox = document.getElementById('obsBox');
+        const saveStatus = document.getElementById('saveStatus');
+
+        // Carregar notas quando a página abre
+        window.onload = function() {
+            const savedNotes = localStorage.getItem('fpo_notas_gerente');
+            if (savedNotes) {
+                obsBox.value = savedNotes;
+            }
+            saveStatus.style.display = 'none';
+        };
+
+        // Salvar notas ao clicar no botão
+        function salvarAnotacoes() {
+            localStorage.setItem('fpo_notas_gerente', obsBox.value);
+            
+            // Mostrar mensagem de sucesso e esconder depois de 2 segundos
+            saveStatus.style.display = 'block';
+            setTimeout(() => {
+                saveStatus.style.display = 'none';
+            }, 2000);
+        }
+    </script>
 </body>
 </html>
