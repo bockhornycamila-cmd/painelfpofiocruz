@@ -42,7 +42,6 @@
 
         header h1 { margin: 0; font-size: 24px; }
         
-        /* Controles (Filtros e Notas) */
         .controls-section {
             display: flex;
             gap: 20px;
@@ -60,7 +59,7 @@
         }
 
         .notes-area {
-            background: #fff9c4; /* Cor de post-it */
+            background: #fff9c4;
             padding: 15px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
@@ -96,7 +95,6 @@
             background: transparent;
         }
 
-        /* Quadro (Board) */
         .board {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -129,8 +127,6 @@
 
         .card.urgent { border-left-color: var(--danger); }
         .card.warning { border-left-color: var(--warning); }
-        
-        /* Classe para esconder cartões no filtro */
         .hidden { display: none !important; }
 
         .card-title { font-size: 14px; font-weight: bold; margin: 0 0 10px 0; }
@@ -169,7 +165,7 @@
         
         <div class="notes-area">
             <h3 style="margin-top: 0; font-size: 14px; color: #5c4000;">📝 Observações do Gerente:</h3>
-            <textarea id="obsBox" placeholder="Digite aqui suas anotações, lembretes para reuniões, etc..."></textarea>
+            <textarea id="obsBox" placeholder="Digite aqui suas anotações..."></textarea>
             <button class="btn btn-save" onclick="salvarAnotacoes()">💾 Salvar Observações</button>
             <span id="saveStatus" style="font-size: 11px; color: green; display: none; margin-top: 5px; text-align: center; display: block;">Salvo com sucesso!</span>
         </div>
@@ -221,7 +217,7 @@
         </div>
 
         <div class="column">
-            <div class="column-header">👤 Júlia</div>
+            <div class="column-header">👤 Bernardo</div>
 
             <div class="card urgent item-card">
                 <span class="badge badge-date">Prev: 23/03</span>
@@ -265,7 +261,7 @@
         </div>
 
         <div class="column">
-            <div class="column-header">👤 Bernardo</div>
+            <div class="column-header">👤 Júlia</div>
 
             <div class="card urgent item-card">
                 <span class="badge badge-date">Prev: AGOSTO</span>
@@ -308,52 +304,30 @@
     </div>
 
     <script>
-        // Sistema de Filtros
         function filtrar(tipo) {
             const cards = document.querySelectorAll('.item-card');
-            
             cards.forEach(card => {
-                if (tipo === 'todos') {
-                    card.classList.remove('hidden');
-                } else if (tipo === 'urgent') {
-                    if (card.classList.contains('urgent')) {
-                        card.classList.remove('hidden');
-                    } else {
-                        card.classList.add('hidden');
-                    }
-                } else if (tipo === 'warning') {
-                    if (card.classList.contains('warning')) {
-                        card.classList.remove('hidden');
-                    } else {
-                        card.classList.add('hidden');
-                    }
-                }
+                if (tipo === 'todos') card.classList.remove('hidden');
+                else if (tipo === 'urgent') card.classList.toggle('hidden', !card.classList.contains('urgent'));
+                else if (tipo === 'warning') card.classList.toggle('hidden', !card.classList.contains('warning'));
             });
         }
 
-        // Sistema de Salvamento de Notas (Local Storage)
         const obsBox = document.getElementById('obsBox');
         const saveStatus = document.getElementById('saveStatus');
 
-        // Carregar notas quando a página abre
         window.onload = function() {
             const savedNotes = localStorage.getItem('fpo_notas_gerente');
-            if (savedNotes) {
-                obsBox.value = savedNotes;
-            }
+            if (savedNotes) obsBox.value = savedNotes;
             saveStatus.style.display = 'none';
         };
 
-        // Salvar notas ao clicar no botão
         function salvarAnotacoes() {
             localStorage.setItem('fpo_notas_gerente', obsBox.value);
-            
-            // Mostrar mensagem de sucesso e esconder depois de 2 segundos
             saveStatus.style.display = 'block';
-            setTimeout(() => {
-                saveStatus.style.display = 'none';
-            }, 2000);
+            setTimeout(() => { saveStatus.style.display = 'none'; }, 2000);
         }
     </script>
 </body>
+</html>
 </html>
