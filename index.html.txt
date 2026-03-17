@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Projeto FPO - Fiocruz</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 20px; }
+        .header { background-color: #0056b3; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: center; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-button { background-color: #e2e8f0; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; font-weight: bold; transition: 0.3s; font-size: 14px; }
+        .tab-button:hover, .tab-button.active { background-color: #0056b3; color: white; }
+        .tab-content { display: none; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f8f9fa; font-weight: 600;}
+        .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 0.85em; font-weight: bold; }
+        .status-ok { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .status-pendente { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .status-atraso { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Painel Interativo - Estrutura Projeto FPO</h1>
+    <p>Gestão de Produtos, Responsabilidades e Prazos</p>
+</div>
+
+<div class="tabs">
+    <button class="tab-button active" onclick="openTab(event, 'entregas')">📦 Estrutura de Produtos e Entregas</button>
+    <button class="tab-button" onclick="openTab(event, 'cronograma')">📅 Prazos e Metas</button>
+</div>
+
+<div id="entregas" class="tab-content" style="display:block;">
+    <h2>Mapeamento de Entregas Oficiais</h2>
+    <table>
+        <tr>
+            <th>Produto / Entrega</th>
+            <th>Responsáveis Principais</th>
+            <th>Status / Observações</th>
+        </tr>
+        <tr>
+            <td><strong>Produto P1:</strong> Relatório e artigo sobre outorga da CEDAE no RJ</td>
+            <td>Bruno, Ana e Talita</td>
+            <td><span class="status-badge status-pendente">Apresentar no projeto 15/04</span></td>
+        </tr>
+        <tr>
+            <td><strong>Produto P2:</strong> Relatório CEDAE municípios do interior</td>
+            <td>Bruno, Helen e Carina</td>
+            <td><span class="status-badge status-pendente">Apresentar 19/03 | Consolidar 05/05</span></td>
+        </tr>
+        <tr>
+            <td><strong>Produto P4:</strong> Artigo científico (indicadores económicos)</td>
+            <td>Bruno, Monique, Júlia, Bernardo</td>
+            <td><span class="status-badge status-ok">Entrega final em Agosto</span></td>
+        </tr>
+        <tr>
+            <td>Base cartográfica (Mapa de Georreferenciamento)</td>
+            <td>Júlia e Monique</td>
+            <td><span class="status-badge status-pendente">Submissão ENEP 23/03 | Final Junho</span></td>
+        </tr>
+        <tr>
+            <td>Curso popular "Financeirização das políticas de saneamento"</td>
+            <td>Bruno</td>
+            <td><span class="status-badge status-pendente">Articular com JR ou ENSP | Abril/Maio</span></td>
+        </tr>
+        <tr>
+            <td>Painel interativo com dados municipais e estaduais</td>
+            <td>Júlia, Ana e Helen</td>
+            <td><span class="status-badge status-ok">Auxiliar com a base e analisar</span></td>
+        </tr>
+         <tr>
+            <td>Dossiê temático / Glossário crítico</td>
+            <td>Bernardo e Júlia</td>
+            <td><span class="status-badge status-pendente">Versão inicial para 15/04</span></td>
+        </tr>
+        <tr>
+            <td>Legenda da Planilha (Documento técnico de padronização)</td>
+            <td>Bernardo</td>
+            <td><span class="status-badge status-atraso">Reunião com Adriana necessária</span></td>
+        </tr>
+    </table>
+</div>
+
+<div id="cronograma" class="tab-content">
+    <h2>Cronograma Consolidado (Por Datas)</h2>
+    <table>
+        <tr>
+            <th>Data / Prazo</th>
+            <th>Atividade / Entrega</th>
+            <th>Envolvidos(as)</th>
+        </tr>
+        <tr>
+            <td><strong>14/03</strong></td>
+            <td>Iniciar o Relatório de devolutiva e Pôster ENEP</td>
+            <td>Bernardo, Monique</td>
+        </tr>
+        <tr>
+            <td><strong>19/03</strong></td>
+            <td>Apresentação na reunião do projeto (Produto P2)</td>
+            <td>Helen e Carina</td>
+        </tr>
+        <tr>
+            <td><strong>23/03</strong></td>
+            <td>Data final de submissão do Pôster para o ENEP</td>
+            <td>Monique</td>
+        </tr>
+        <tr>
+            <td><strong>Final de Março</strong></td>
+            <td>Entrega da Versão 1 do Artigo do Rio de Janeiro</td>
+            <td>Ana e Talita</td>
+        </tr>
+        <tr>
+            <td><strong>10/04</strong></td>
+            <td>Revisão e ajustes do Produto P2</td>
+            <td>Helen e Carina</td>
+        </tr>
+        <tr>
+            <td><strong>15/04</strong></td>
+            <td>Apresentação P1 e versão inicial do Glossário</td>
+            <td>Ana, Talita, Júlia</td>
+        </tr>
+        <tr>
+            <td><strong>Abril / Maio</strong></td>
+            <td>Realização da Oficina / Curso Popular</td>
+            <td>Bruno</td>
+        </tr>
+        <tr>
+            <td><strong>05/05</strong></td>
+            <td>Consolidar o Produto P2</td>
+            <td>Helen e Carina</td>
+        </tr>
+        <tr>
+            <td><strong>Junho</strong></td>
+            <td>Entrega final do Mapa de Georreferenciamento</td>
+            <td>Monique</td>
+        </tr>
+        <tr>
+            <td><strong>Agosto</strong></td>
+            <td>Entrega do Artigo Final (Produto P4)</td>
+            <td>Monique, Júlia, Bernardo, Bruno</td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        
+        tablinks = document.getElementsByClassName("tab-button");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+</script>
+
+</body>
+</html>
